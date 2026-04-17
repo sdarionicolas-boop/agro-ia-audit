@@ -1,0 +1,100 @@
+# ── Region & Season ─────────────────────────────────
+region:
+  name: "clay"
+  fields_dir: "data/fields"
+  tiles: ["custom_tile"]
+  fragments: "all"
+  # Directory structure expected:
+  #   data/fields/<tile_id>/<tile_id>_fragment_XX_YY.geojson
+  # Use "all" to load every fragment, or list specific ones: ["00_00", "01_00"]
+
+season:
+  start_date: "2025-11-01"
+  end_date: "2026-03-30"
+  cadence_days: 16
+
+# ── Data Sources ────────────────────────────────────
+stac:
+  catalog_url: "https://earth-search.aws.element84.com/v1"
+  collection: "sentinel-2-l2a"
+  max_cloud_cover: 20
+  max_scenes: 20
+  bands: ["B02", "B03", "B04", "B08", "B05", "B06", "B07", "B8A", "B11", "B12"]
+
+cdl:
+  source: "embedded"   # "embedded" = use labels from GeoJSON properties; "usda" = download CDL raster
+  year: 2022            # only used when source: "embedded"
+
+# ── Chip Extraction ─────────────────────────────────
+chips:
+  size_px: 224
+  resolution_m: 10
+  padding_mode: "reflect"
+  nodata_threshold: 0.3
+  max_parcels: null  # controlled from dashboard; null = all parcels
+
+# ── Model ───────────────────────────────────────────
+model:
+  backend: "clay-direct"
+  weights_path: "clay-v1.5"
+  fallback_weights: "data/model/clay-v1-base.ckpt"
+  embedding_dim: 768
+  batch_size: 16
+  num_workers: 4
+
+# ── Scoring ─────────────────────────────────────────
+scoring:
+  method: "cosine_distance"
+  aggregation: "temporal_mean"
+  threshold_method: "adaptive"   # "fixed" = use absolute thresholds; "adaptive" = z-score based
+  thresholds:                    # used when threshold_method: "fixed"
+    green: 0.15
+    yellow: 0.30
+    red: 0.30
+  sigma_yellow: 1.5              # used when threshold_method: "adaptive" (mean + N*std)
+  sigma_red: 2.5
+  min_observations: 1
+  urgency_weight_early: 1.5
+
+# ── GPU ─────────────────────────────────────────────
+gpu:
+  default_device: "RTX 4070"
+  smoke_test_device: "RTX 500"
+
+# ── LLM Explanation (optional; explain step) ─────────
+llm:
+  enabled: false
+  use_mock: false          # true = deterministic JSON without loading Transformers
+  gpu_device: null         # null = auto (device_map); or set cuda device index
+  profiles:
+    high:
+      model_id: "microsoft/Phi-3.5-mini-instruct"
+      dtype: "float16"
+      quantization: null
+      max_new_tokens: 512
+    low:
+      model_id: "Qwen/Qwen2.5-1.5B-Instruct"
+      dtype: "float16"
+      quantization: "4bit"
+      max_new_tokens: 384
+  profile_override: null   # force "high" or "low"; null = auto by VRAM
+  vram_threshold_gb: 8
+  batch_size: 10
+  max_parcels: null
+  temperature: 0.1
+  top_p: 0.9
+  retry_temperature: 0.35
+  skip_if_unchanged: false
+  # Optional Geo-RAG retrieval layer (local evidence only; does not replace scoring).
+  geo_rag:
+    enabled: false
+    k_semantic: 5      # FAISS similar parcels (embedding cosine similarity)
+    k_spatial: 5       # geographic neighbours (haversine on centroids)
+    max_spatial_km: null   # null = no distance cap
+
+# ── Output ──────────────────────────────────────────
+output:
+  dir: "data/output"
+  parquet: true
+  geojson: true
+  csv_summary: true

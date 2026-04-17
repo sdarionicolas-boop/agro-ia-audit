@@ -1,0 +1,8 @@
+{
+"type": "FeatureCollection",
+"name": "parcel_scores",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "parcel_id": "1", "crop_name": "maíz", "centroid_lat": -34.257781620655464, "centroid_lon": -60.85178818766498, "area_ha": 112.04815246664758, "tile_id": "custom_tile", "fragment_id": "00_00", "health_score": null, "status": "GRAY", "n_observations": 14, "max_deviation_date": null, "distance_trajectory": [ ] }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ -60.8598765, -34.2576087 ], [ -60.8516409, -34.2645859 ], [ -60.8436829, -34.2578308 ], [ -60.851974, -34.2510388 ], [ -60.8598765, -34.2576087 ] ] ] ] } }
+]
+}

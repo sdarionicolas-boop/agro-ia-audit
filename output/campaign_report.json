@@ -1,0 +1,43 @@
+{
+  "total_parcels": 1,
+  "status_counts": {
+    "GRAY": 1
+  },
+  "status_pct": {
+    "GRAY": 100.0
+  },
+  "crop_breakdown": [
+    {
+      "crop_name": "ma\u00edz",
+      "total": 1,
+      "green": 0,
+      "yellow": 0,
+      "red": 0,
+      "gray": 1,
+      "avg_health_score": null
+    }
+  ],
+  "top10_worst": [],
+  "temporal_coverage": {
+    "mean_observations": 14.0,
+    "min_observations": 14,
+    "max_observations": 14,
+    "median_observations": 14.0
+  },
+  "season": {
+    "start_date": "2025-11-01",
+    "end_date": "2026-03-30",
+    "cadence_days": 16
+  },
+  "region": "central_iowa",
+  "scoring": {
+    "threshold_method": "adaptive",
+    "thresholds": {
+      "green": 0.15,
+      "yellow": 0.3,
+      "red": 0.3
+    },
+    "sigma_yellow": 1.5,
+    "sigma_red": 2.5
+  }
+}
